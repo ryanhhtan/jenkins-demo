@@ -10,7 +10,7 @@ pipeline {
         }
       }
       steps {
-        sh 'while ! docker run --rm mdillon/postgis:10k pg_isready -h mdillon-postgis; do echo "waiting postgis ready..."; sleep 1 done'
+        sh 'while ! docker run --rm mdillon/postgis:10k pg_isready -h mdillon-postgis; do echo "waiting postgis ready..."; sleep 1; done'
         sh 'echo postgis is up and running.'
       }
     }
