@@ -1,22 +1,31 @@
 pipeline {
   agent {
     node {
-      label 'maven-docker-postgis'
-      docker.image('mdillon/postgis:10').withRun('--hostname mdillon-postgis -e "POSTGRES_PASSWORD=example" -e "POSTGRES_DB=test"') { c ->
-        docker.image('mdillon/postgis:10').inside() {
-          sh 'while ! pg_isready -h mdillon-postgis; do echo "wating potgis to be ready..."; sleep 1; done'
-          sh 'echo postgis is ready.'
-        }
-        docker.image('maven:3-alpine').inside() {
-          sh 'mvn --version'
-        }
-      }
+      label 'docker'
     }
   }
   stages {
+    stage('prepare-db') {
+      agent {
+        docker {
+          image 'mdillon/postgis:10'
+          label 'mdillon-postgis'
+          args '--name postgis --hostname mdillon-postgis -e "POSTGRES_PASSWORD=example" -e "POSTGRES_DB=test"'
+          reuseNode true
+        }
+        steps {
+          sh 'docker exec postgis pg_isready'
+        }
+      }
+    }
     stage('build') {
       steps {
-        sh './mvnw compile'
+        sh 'echo building'
+      }
+    }
+    stage('test') {
+      steps {
+        sh 'echo testing'
       }
     }
   }
