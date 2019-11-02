@@ -1,21 +1,17 @@
 pipeline {
-  agent {
-    node {
-      label 'docker'
-    }
-  }
+  agent any
   stages {
     stage('prepare-db') {
       agent {
         docker {
           image 'mdillon/postgis:10'
-          label 'docker-postgis'
           args '--name postgis --hostname mdillon-postgis -e "POSTGRES_PASSWORD=example" -e "POSTGRES_DB=test"'
           reuseNode true
         }
       }
       steps {
-        sh 'docker exec postgis pg_isready'
+        sh 'while ! docker run --rm mdillon/postgis:10k pg_isready -h mdillon-postgis; do echo "waiting postgis ready..."; sleep 1 done'
+        sh 'echo postgis is up and running.'
       }
     }
     stage('build') {
@@ -27,7 +23,7 @@ pipeline {
         }
       }
       steps {
-        sh 'docker exec postgis pg_isready'
+        sh 'ping -c 1 mdillon-postgis'
         sh 'mvn --version'
       }
     }
