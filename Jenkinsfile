@@ -1,7 +1,5 @@
 pipeline {
-  agent { 
-    label 'docker' 
-  }
+  agent none
   stages {
     stage('prepare-db') {
       agent {
@@ -17,8 +15,15 @@ pipeline {
       }
     }
     stage('build') {
+      agent {
+        docker {
+          image 'maven:3-alpine'
+          label 'maven'
+          reuseNode true
+        }
       steps {
-        sh 'echo building'
+        sh 'docker exec postgis pg_isready'
+        sh 'mvn --version'
       }
     }
     stage('test') {
