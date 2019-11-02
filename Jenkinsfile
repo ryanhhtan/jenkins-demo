@@ -1,7 +1,7 @@
 pipeline {
   agent {
     node {
-      label docker
+      label 'docker'
     }
   }
   stages {
@@ -9,7 +9,7 @@ pipeline {
       agent {
         docker {
           image 'mdillon/postgis:10'
-          label 'postgis'
+          label 'docker-postgis'
           args '--name postgis --hostname mdillon-postgis -e "POSTGRES_PASSWORD=example" -e "POSTGRES_DB=test"'
           reuseNode true
         }
