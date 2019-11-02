@@ -1,5 +1,11 @@
 pipeline {
-  agent any
+  agent {
+    docker {
+      image 'docker:dind'
+      args '-v /run/docker.sock:/run/docker.sock'
+      reuseNode true
+    }
+  }
   stages {
     stage('prepare-db') {
       agent {
