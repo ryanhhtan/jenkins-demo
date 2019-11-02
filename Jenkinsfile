@@ -21,6 +21,7 @@ pipeline {
           label 'maven'
           reuseNode true
         }
+      }
       steps {
         sh 'docker exec postgis pg_isready'
         sh 'mvn --version'
