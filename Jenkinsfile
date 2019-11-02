@@ -1,11 +1,11 @@
 node {
     label 'maven-docker-postgis'
-    docker.image('mdillon/postgis:10').withRun('-e "POSTGRES_PASSWORD=example" -e "POSTGRES_DB=test"') { c ->
-      docker.image('mdillon/postgis:10').inside("--link ${c.id}:mdillon-postgis") {
-        sh 'while ! pg_isready; do echo "wating potgis to be ready..."; sleep 1; done'
+    docker.image('mdillon/postgis:10').withRun('--hostname mdillon-postgis -e "POSTGRES_PASSWORD=example" -e "POSTGRES_DB=test"') { c ->
+      docker.image('mdillon/postgis:10').inside() {
+        sh 'while ! pg_isready -h mdillon-postgis; do echo "wating potgis to be ready..."; sleep 1; done'
         sh 'ehcho postgis is ready.'
       }
-      docker.image('maven:3-alpine').inside("--link ${c.id}:mdillon-postgis") {
+      docker.image('maven:3-alpine').inside() {
         sh 'mvn --version'
       }
     }
