@@ -1,6 +1,8 @@
 pipeline {
   agent { 
-    label 'docker'
+    node {
+      label 'docker'
+    }
   }
   stages {
     stage('prepare-db') {
