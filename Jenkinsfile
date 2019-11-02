@@ -5,12 +5,12 @@ pipeline {
       agent {
         docker {
           image 'mdillon/postgis:10'
-          args '--name postgis --hostname mdillon-postgis -e "POSTGRES_PASSWORD=example" -e "POSTGRES_DB=test"'
+          args '-v /var/run/docker.sock:/var/run/docker.sock --hostname mdillon-postgis -e "POSTGRES_PASSWORD=example" -e "POSTGRES_DB=test"'
           reuseNode true
         }
       }
       steps {
-        sh 'while ! pg_isready; do echo "waiting postgis ready..."; sleep 1; done'
+        sh 'docker run --rm mdillon/postgis:10 pg_isready -h mdillon-postgis'
         sh 'echo postgis is up and running.'
       }
     }
