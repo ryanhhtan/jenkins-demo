@@ -1,13 +1,7 @@
 pipeline {
-  agent {
-    docker {
-      image 'docker:dind'
-      args '-v /var/run/docker.sock:/var/run/docker.sock'
-      reuseNode true
-    }
-  }
+  agent none
   stages {
-    stage('prepare-db') {
+    stage('prepare') {
       agent {
         docker {
           image 'mdillon/postgis:10'
@@ -16,7 +10,7 @@ pipeline {
         }
       }
       steps {
-        sh 'while ! docker run --rm mdillon/postgis:10k pg_isready -h mdillon-postgis; do echo "waiting postgis ready..."; sleep 1; done'
+        sh 'while ! pg_isready; do echo "waiting postgis ready..."; sleep 1; done'
         sh 'echo postgis is up and running.'
       }
     }
