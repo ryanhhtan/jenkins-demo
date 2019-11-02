@@ -1,8 +1,6 @@
 pipeline {
   agent { 
-    node {
-      label 'docker'
-    }
+    label 'docker' 
   }
   stages {
     stage('prepare-db') {
@@ -13,9 +11,9 @@ pipeline {
           args '--name postgis --hostname mdillon-postgis -e "POSTGRES_PASSWORD=example" -e "POSTGRES_DB=test"'
           reuseNode true
         }
-        steps {
-          sh 'docker exec postgis pg_isready'
-        }
+      }
+      steps {
+        sh 'docker exec postgis pg_isready'
       }
     }
     stage('build') {
